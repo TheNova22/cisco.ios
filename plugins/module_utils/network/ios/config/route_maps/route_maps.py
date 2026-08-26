@@ -144,11 +144,18 @@ class Route_maps(ResourceModule):
                         elif not have_set and want_set:
                             self.list_type_compare("set", want=want_set, have=dict())
 
-                        self.commands.insert(
-                            cmd_len,
-                            self._route_map_entry_cmd(want["route_map"], want["entries"][k]),
-                        )
-                        cmd_len = len(self.commands)
+                        # Emit header when the entry is new (have_entry is empty, so no
+                        # device counterpart exists — bare entries included) or when
+                        # parsers produced actual CLI sub-commands.  Existing entries
+                        # whose only difference is a non-CLI-affecting representation
+                        # (e.g. int vs str for the same value) produce no sub-commands
+                        # and must not emit the header to preserve idempotency.
+                        if not have_entry or cmd_len != len(self.commands):
+                            self.commands.insert(
+                                cmd_len,
+                                self._route_map_entry_cmd(want["route_map"], want["entries"][k]),
+                            )
+                            cmd_len = len(self.commands)
             else:
                 for k, v in want["entries"].items():
                     self.compare(parsers=self.parsers, want=want["entries"][k], have=dict())
