@@ -825,6 +825,7 @@ class TestIosBgpAddressFamilyModule(TestIosModule):
              neighbor TEST-PEER-GROUP peer-group
              neighbor 2001:db8::1 peer-group TEST-PEER-GROUP
              neighbor 2001:db8::1 description TEST-PEER-GROUP-DESCRIPTION
+             neighbor 2001:db8::1 remote-as 100
              !
              address-family ipv4
               bgp redistribute-internal
